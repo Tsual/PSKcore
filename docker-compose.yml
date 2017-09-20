@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  pskcore:
+    image: pskcore
+    build:
+      context: ./PSKcore
+      dockerfile: Dockerfile

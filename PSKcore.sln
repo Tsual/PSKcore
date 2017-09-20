@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSKcore", "PSKcore\PSKcore.csproj", "{AC77F0F4-BAFD-4A9B-B447-7C4F95D80C68}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5E743D26-A62F-4023-AC25-A195C854AEAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC77F0F4-BAFD-4A9B-B447-7C4F95D80C68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC77F0F4-BAFD-4A9B-B447-7C4F95D80C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC77F0F4-BAFD-4A9B-B447-7C4F95D80C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC77F0F4-BAFD-4A9B-B447-7C4F95D80C68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E743D26-A62F-4023-AC25-A195C854AEAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E743D26-A62F-4023-AC25-A195C854AEAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E743D26-A62F-4023-AC25-A195C854AEAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E743D26-A62F-4023-AC25-A195C854AEAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2ED5744B-1E0A-408D-A0A2-87693D09172E}
+	EndGlobalSection
+EndGlobal
