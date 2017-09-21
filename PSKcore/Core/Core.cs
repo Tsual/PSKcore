@@ -10,8 +10,11 @@ namespace PSKcore
 {
     public class Test
     {
-        public static void main()
+        public static async Task mainAsync()
         {
+            var user = LoginUser.CreateObj("test", "test");
+            await user.TryLoginAsync(LoginUser.UserNotFoundReceipt.Create);
+
 
 
             int a = 0;
@@ -65,10 +68,5 @@ namespace PSKcore
         public void Unsubscribe() => CurrentUser = null;
 
 
-    }
-
-    public class HashAlgorithmNames
-    {
-        public const string Md5 = "MD5";
     }
 }

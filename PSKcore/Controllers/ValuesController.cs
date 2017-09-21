@@ -11,9 +11,9 @@ namespace PSKcore.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<string>> GetAsync()
         {
-            Test.main();
+            await Test.mainAsync();
             return new string[] { "value1", "value2" };
         }
 

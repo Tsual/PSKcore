@@ -1,81 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PSKcore.DbModel;
 
 namespace PSKcore.AppModel
 {
-
-    public class ATT_INFO_Str
+    public class Info
     {
-        public string str { get; set; }
-    }
+        public Recording Record { get; set; }
 
-    public class ATT_INFO
-    {
-
-
-        public Info _Info { get; set; }
-        public ObservableCollection<ATT_INFO_Str> Lines { get => _Lines; }
-        private ObservableCollection<ATT_INFO_Str> _Lines = new ObservableCollection<ATT_INFO_Str>();
-        private int _infoindex = 0;
-
-
-        public ATT_INFO(Info info)
+        string _DetailName = "";
+        public string DetailName
         {
-            if (info != null)
-                _Info = info;
-            else
-                throw new NullReferenceException();
-            _infoindex = Core.Current.CurrentUser.Recordings.IndexOf(info);
-            _deserialize();
-            _Lines.CollectionChanged += _Lines_CollectionChanged;
-        }
-
-        public void _Lines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            _serializeAsync();
-        }
-
-        private void _serializeAsync()
-        {
-            try
+            get { return _DetailName; }
+            set
             {
-                using (MemoryStream ms = new MemoryStream())
+                _DetailName = value;
+                if (Core.Current.CurrentUser != null)
                 {
-                    DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
-                    ser.WriteObject(ms, _Lines);
-                    var res = Encoding.UTF8.GetString(ms.ToArray());
-                    Core.Current.CurrentUser.Recordings[_infoindex] = new Info() { DetailName = _Info.DetailName, Record = _Info.Record, Detail = res };
+                    var _old = Core.Current.CurrentUser.Recordings.IndexOf(this);
+                    if (_old > 0) Core.Current.CurrentUser.Recordings[_old] = this;
                 }
             }
-            finally { }
         }
 
-        private void _deserialize()
+        string _Detail = "";
+        public string Detail
         {
-            if (_Info.Detail == "") return;
-            try
+            get { return _Detail; }
+            set
             {
-                using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(_Info.Detail)))
+                _Detail = value;
+                if (Core.Current.CurrentUser != null)
                 {
-                    DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
-                    if (ser.ReadObject(ms) is ObservableCollection<ATT_INFO_Str> res)
-                    {
-                        var t = res;
-                        _Lines = res;
-                    }
-
+                    var _old = Core.Current.CurrentUser.Recordings.IndexOf(this);
+                    if (_old > 0) Core.Current.CurrentUser.Recordings[_old] = this;
                 }
             }
-            finally { }
+        }
 
+        public Recording Encode(CurrentUser user)
+        {
+            Record = new Recording();
+            Record.key = user.Encode(DetailName);
+            Record.value = user.Encode(Detail);
+            Record.uid = user.UID;
+            return Record;
+        }
+
+        public Recording Modify(CurrentUser user)
+        {
+            Record.key = user.Encode(DetailName);
+            Record.value = user.Encode(Detail);
+            Record.uid = user.UID;
+            return Record;
+        }
+
+        public Info()
+        {
 
         }
+
+        public Info(Recording record, CurrentUser user)
+        {
+            this.Record = record;
+            this.DetailName = user.Decode(record.key);
+            this.Detail = user.Decode(record.value);
+        }
+
+
     }
 
 
