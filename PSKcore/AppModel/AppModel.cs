@@ -10,73 +10,73 @@ using System.Threading.Tasks;
 namespace PSKcore.AppModel
 {
 
-    public class ATT_INFO_Str
-    {
-        public string str { get; set; }
-    }
+    //public class ATT_INFO_Str
+    //{
+    //    public string str { get; set; }
+    //}
 
-    public class ATT_INFO
-    {
-
-
-        public Info _Info { get; set; }
-        public ObservableCollection<ATT_INFO_Str> Lines { get => _Lines; }
-        private ObservableCollection<ATT_INFO_Str> _Lines = new ObservableCollection<ATT_INFO_Str>();
-        private int _infoindex = 0;
+    //public class ATT_INFO
+    //{
 
 
-        public ATT_INFO(Info info)
-        {
-            if (info != null)
-                _Info = info;
-            else
-                throw new NullReferenceException();
-            _infoindex = Core.Current.CurrentUser.Recordings.IndexOf(info);
-            _deserialize();
-            _Lines.CollectionChanged += _Lines_CollectionChanged;
-        }
-
-        public void _Lines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            _serializeAsync();
-        }
-
-        private void _serializeAsync()
-        {
-            try
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
-                    ser.WriteObject(ms, _Lines);
-                    var res = Encoding.UTF8.GetString(ms.ToArray());
-                    Core.Current.CurrentUser.Recordings[_infoindex] = new Info() { DetailName = _Info.DetailName, Record = _Info.Record, Detail = res };
-                }
-            }
-            finally { }
-        }
-
-        private void _deserialize()
-        {
-            if (_Info.Detail == "") return;
-            try
-            {
-                using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(_Info.Detail)))
-                {
-                    DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
-                    if (ser.ReadObject(ms) is ObservableCollection<ATT_INFO_Str> res)
-                    {
-                        var t = res;
-                        _Lines = res;
-                    }
-
-                }
-            }
-            finally { }
+    //    public Info _Info { get; set; }
+    //    public ObservableCollection<ATT_INFO_Str> Lines { get => _Lines; }
+    //    private ObservableCollection<ATT_INFO_Str> _Lines = new ObservableCollection<ATT_INFO_Str>();
+    //    private int _infoindex = 0;
 
 
-        }
-    }
+    //    public ATT_INFO(Info info)
+    //    {
+    //        if (info != null)
+    //            _Info = info;
+    //        else
+    //            throw new NullReferenceException();
+    //        _infoindex = Core.Current.CurrentUser.Recordings.IndexOf(info);
+    //        _deserialize();
+    //        _Lines.CollectionChanged += _Lines_CollectionChanged;
+    //    }
+
+    //    public void _Lines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    //    {
+    //        _serializeAsync();
+    //    }
+
+    //    private void _serializeAsync()
+    //    {
+    //        try
+    //        {
+    //            using (MemoryStream ms = new MemoryStream())
+    //            {
+    //                DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
+    //                ser.WriteObject(ms, _Lines);
+    //                var res = Encoding.UTF8.GetString(ms.ToArray());
+    //                Core.Current.CurrentUser.Recordings[_infoindex] = new Info() { DetailName = _Info.DetailName, Record = _Info.Record, Detail = res };
+    //            }
+    //        }
+    //        finally { }
+    //    }
+
+    //    private void _deserialize()
+    //    {
+    //        if (_Info.Detail == "") return;
+    //        try
+    //        {
+    //            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(_Info.Detail)))
+    //            {
+    //                DataContractSerializer ser = new DataContractSerializer(typeof(ObservableCollection<ATT_INFO_Str>));
+    //                if (ser.ReadObject(ms) is ObservableCollection<ATT_INFO_Str> res)
+    //                {
+    //                    var t = res;
+    //                    _Lines = res;
+    //                }
+
+    //            }
+    //        }
+    //        finally { }
+
+
+    //    }
+    //}
 
 
     //public class DataPac

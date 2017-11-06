@@ -7,12 +7,12 @@ namespace PSKcore.Helper
 {
     public class ModelEnhancer<T>
     {
-        private T innerobj;
+        //private T innerobj;
 
-        public ModelEnhancer()
-        {
+        //public ModelEnhancer()
+        //{
             
-        }
+        //}
 
     }
 }

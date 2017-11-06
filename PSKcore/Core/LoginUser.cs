@@ -1,6 +1,7 @@
 ﻿using PSK.Helper;
 using PSKcore.AppModel;
 using PSKcore.DbModel;
+using PSKcore.Interface;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,12 +9,12 @@ namespace PSKcore
 {
     public class LoginUser
     {
-        public string PID { get; set; }
-        public string PWD_hash { get; set; }
+        public string PID { get;private set; }
+        public string PWD_hash { get;private set; }
 
         private LoginUser() { }
 
-        public static LoginUser CreateObj(string pid, string pwd)
+        internal static LoginUser CreateObj(string pid, string pwd)
         {
             var user = new LoginUser();
             user.PID = pid;
@@ -29,7 +30,7 @@ namespace PSKcore
             return user;
         }
 
-        public async Task TryLoginAsync(UserNotFoundReceipt e)
+        public async Task TryLoginAsync(UserNotFoundReceipt e, IPSKcore service)
         {
 
             using (APPDbContext db = new APPDbContext())
@@ -73,15 +74,15 @@ namespace PSKcore
                             b_UserPwdVertifyFailEvent = true;
                         }
                     }
-                    int uid = (from t in db.Users
+                    int UID = (from t in db.Users
                                where PID == t.pid && pwd_hash_aes == t.pwd
                                select t).ToList()[0].ID;
 
                     var rlist = from t in db.Recordings
-                                 where t.uid == uid
-                                 select t;
+                                 where t.uid == UID
+                                select t;
 
-                    Core.Current.Regist(new CurrentUser(rlist, PID, PWD_hash, uid));
+                    service.Regist(new CurrentUser(rlist, PID, PWD_hash, UID, service));
                     b_UserVertifyEvent = true;
                 });
 

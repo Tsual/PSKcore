@@ -1,9 +1,11 @@
 ﻿using PSKcore.DbModel;
+using PSKcore.Interface;
 
 namespace PSKcore.AppModel
 {
     public class Info
     {
+        private IPSKcore service = null;
         public Recording Record { get; set; }
 
         string _DetailName = "";
@@ -13,10 +15,10 @@ namespace PSKcore.AppModel
             set
             {
                 _DetailName = value;
-                if (Core.Current.CurrentUser != null)
+                if (service?.CurrentUser != null)
                 {
-                    var _old = Core.Current.CurrentUser.Recordings.IndexOf(this);
-                    if (_old > 0) Core.Current.CurrentUser.Recordings[_old] = this;
+                    var _old = service.CurrentUser.Recordings.IndexOf(this);
+                    if (_old > 0) service.CurrentUser.Recordings[_old] = this;
                 }
             }
         }
@@ -28,41 +30,43 @@ namespace PSKcore.AppModel
             set
             {
                 _Detail = value;
-                if (Core.Current.CurrentUser != null)
+                if (service?.CurrentUser != null)
                 {
-                    var _old = Core.Current.CurrentUser.Recordings.IndexOf(this);
-                    if (_old > 0) Core.Current.CurrentUser.Recordings[_old] = this;
+                    var _old = service.CurrentUser.Recordings.IndexOf(this);
+                    if (_old > 0) service.CurrentUser.Recordings[_old] = this;
                 }
             }
         }
 
-        public Recording Encode(CurrentUser user)
+        public Recording Encode(CurrentUser user,int rid)
         {
+            var str=AssetsController.getRecordingSequenceString(rid);
             Record = new Recording();
-            Record.key = user.Encode(DetailName);
-            Record.value = user.Encode(Detail);
+            Record.key = user.Encode(str+DetailName );
+            Record.value = user.Encode(str+Detail);
             Record.uid = user.UID;
             return Record;
         }
 
         public Recording Modify(CurrentUser user)
         {
-            Record.key = user.Encode(DetailName);
-            Record.value = user.Encode(Detail);
+            var str = AssetsController.getRecordingSequenceString(Record.ID);
+            Record.key = user.Encode(str+DetailName);
+            Record.value = user.Encode(str+Detail);
             Record.uid = user.UID;
             return Record;
         }
 
-        public Info()
+        public Info(IPSKcore service)
         {
-
+            this.service = service;
         }
 
         public Info(Recording record, CurrentUser user)
         {
             this.Record = record;
-            this.DetailName = user.Decode(record.key);
-            this.Detail = user.Decode(record.value);
+            this.DetailName = user.Decode(record.key).Substring(20);
+            this.Detail = user.Decode(record.value).Substring(20);
         }
 
 

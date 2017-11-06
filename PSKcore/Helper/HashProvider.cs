@@ -11,15 +11,21 @@ namespace PSK.Helper
     {
         HashAlgorithm _Hash = null;
 
-        public enum HashAlgorithms { MD5, SHA512 ,}
+        public enum HashAlgorithms { MD5, SHA256, SHA512 ,SHA128}
 
         public HashProvider()
         {
-            _Hash = SHA256.Create(); 
+            _Hash = SHA256.Create();
         }
-        public HashProvider(string name)
+        public HashProvider(HashAlgorithms HashAlgorithm)
         {
-            _Hash = MD5.Create();
+            switch (HashAlgorithm)
+            {
+                case HashAlgorithms.MD5: _Hash = MD5.Create(); break;
+                case HashAlgorithms.SHA512: _Hash = SHA512.Create(); break;
+                case HashAlgorithms.SHA256: _Hash = SHA256.Create(); break;
+            }
+
         }
 
 

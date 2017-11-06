@@ -39,9 +39,9 @@ namespace PSKcore.AppModel
         }
         static byte[] createappiv()
         {
-            byte[] res = new byte[16];
-            new Random().NextBytes(res);
-            return res;
+            _appiv = new byte[16];
+            new Random().NextBytes(_appiv);
+            return _appiv;
         }
 
         static byte[] decodeappkey(string keystr)
@@ -67,9 +67,9 @@ namespace PSKcore.AppModel
         }
         static byte[] createappkey()
         {
-            byte[] res = new byte[32];
-            new Random().NextBytes(res);
-            return res;
+            _appkey = new byte[32];
+            new Random().NextBytes(_appkey);
+            return _appkey;
         }
 
         public static bool Reset()
@@ -105,6 +105,29 @@ namespace PSKcore.AppModel
                     }
                     db.SaveChanges();
                     res = db.SA.Find(id);
+                    if (res == null) throw new Exception("sa id miss");
+                    return res.Data;
+                }
+            }
+        }
+
+        public static string getRecordingSequenceString(int id)
+        {
+            using (APPDbContext db = new APPDbContext())
+            {
+                var res = db.SB.Find(id);
+                if (res != null)
+                    return res.Data;
+                else
+                {
+                    var ncount = db.SB.Count();
+                    var rans = new RandomGenerator();
+                    for (int i = 0; i < id - ncount; i++)
+                    {
+                        db.SB.Add(new StringSequenceObjB() { Data = rans.getRandomString(20) });
+                    }
+                    db.SaveChanges();
+                    res = db.SB.Find(id);
                     if (res == null) throw new Exception("sa id miss");
                     return res.Data;
                 }

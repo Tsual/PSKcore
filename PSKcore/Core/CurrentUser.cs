@@ -1,6 +1,7 @@
 ﻿using PSK.Helper;
 using PSKcore.AppModel;
 using PSKcore.DbModel;
+using PSKcore.Interface;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,10 +9,15 @@ using System.Collections.Specialized;
 
 namespace PSKcore
 {
+    /// <summary>
+    /// UID AESobj Recordings
+    /// </summary>
     public class CurrentUser
     {
-        internal CurrentUser(IEnumerable<Recording> list, string PID, string PWD_hash, int UID)
+        private IPSKcore _TargetService =null;
+        internal CurrentUser(IEnumerable<Recording> list, string PID, string PWD_hash, int UID,IPSKcore service)
         {
+            _TargetService = service;
             this.PID = PID;
             this.PWD_hash = PWD_hash;
             this.UID = UID;
@@ -32,8 +38,14 @@ namespace PSKcore
                     case NotifyCollectionChangedAction.Add:
                         foreach (var t in e.NewItems)
                         {
-                            db.Entry(((Info)t).Encode(this)).State =
-                                Microsoft.EntityFrameworkCore.EntityState.Added;
+                            var entity = new Recording();
+                            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                            db.SaveChanges();
+                            var ur = ((Info)t).Encode(this, entity.ID);
+                            entity.key = ur.key;
+                            entity.value = ur.value;
+                            entity.uid = ur.uid;
+                            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                         break;
                     case NotifyCollectionChangedAction.Remove:
@@ -58,8 +70,14 @@ namespace PSKcore
                         }
                         foreach (var t in e.NewItems)
                         {
-                            db.Entry(((Info)t).Encode(this)).State =
-                                Microsoft.EntityFrameworkCore.EntityState.Added;
+                            var entity = new Recording();
+                            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                            db.SaveChanges();
+                            var ur = ((Info)t).Encode(this, entity.ID);
+                            entity.key = ur.key;
+                            entity.value = ur.value;
+                            entity.uid = ur.uid;
+                            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                         break;
                 }
@@ -76,7 +94,7 @@ namespace PSKcore
             {
                 if (_AESobj == null)
                 {
-                    var ivhash = new HashProvider(HashAlgorithmNames.Md5);
+                    var ivhash = new HashProvider(HashProvider.HashAlgorithms.MD5);
                     byte[] _iv = ivhash.Hashbytes(PID);
 
                     string ranstr = AssetsController.getLocalSequenceString(UID);
@@ -97,7 +115,7 @@ namespace PSKcore
         }
         AESProvider _AESobj;
 
-        public ObservableCollection<Info> Recordings { get => recordings; }
+        public IList<Info> Recordings { get => recordings; }
         private ObservableCollection<Info> recordings = new ObservableCollection<Info>();
 
         public string Decode(string metaStr)
@@ -108,10 +126,18 @@ namespace PSKcore
         {
             return AESobj.Encrypt(metaStr);
         }
+
+        public string Decode(string metaStr,byte[] iv)
+        {
+            return AESobj.Decrypt(metaStr);
+        }
+        public string Encode(string metaStr, byte[] iv)
+        {
+            return AESobj.Encrypt(metaStr);
+        }
         public void Logout()
         {
-
-            Core.Current.Unsubscribe();
+            _TargetService.Unsubscribe();
             UserUnsubscribedEvent?.Invoke(this);
         }
 
